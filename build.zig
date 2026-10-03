@@ -441,12 +441,11 @@ pub fn build(b: *std.Build) !void {
             const emcc_settings = emsdk.emccDefaultSettings(b.allocator, .{
                 .optimize = optimize,
             });
-
-            const emcc_step = emsdk.emccStep(b, raylib_artifact, wasm, .{
+            const emcc_step = emsdk.emccStep(b, &.{}, &.{ raylib_artifact, wasm }, .{
                 .optimize = optimize,
                 .flags = emcc_flags,
                 .settings = emcc_settings,
-                .shell_file_path = emsdk.shell(raylib_dep),
+                .shell_file_path = raylib_dep.path("src/shell.html"),
                 .install_dir = install_dir,
                 .embed_paths = &.{.{ .src_path = b.path("resources/") }},
                 .out_file_name = wasm.name,
