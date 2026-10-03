@@ -16,7 +16,7 @@
             .hash = "raylib-6.0.0-whq8uO2JNwVuiH4KHZ_iHbRuoUj6dT-5vswKz73r-w2k",
         },
     },
-    .minimum_zig_version = "0.17.0-dev.1158+1d1193aa7",
+    .minimum_zig_version = "0.17.0",
     .paths = .{
         "build.zig",
         "build.zig.zon",
