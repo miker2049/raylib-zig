@@ -55,6 +55,10 @@ const WaveTextConfig = struct {
     waveOffset: rl.Vector3,
 };
 
+fn bufPrintZ(buf: []u8, comptime fmt: []const u8, args: anytype) ![:0]u8 {
+    return try std.mem.printSentinel(buf, fmt, args, 0);
+}
+
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -118,7 +122,7 @@ pub fn main() anyerror!void {
     var multi: [text_max_layers]rl.Color = undefined;
 
     // Set the text (using markdown!)
-    var text = [_:0]u8{0} ** 64;
+    var text: [64:0]u8 = @splat(0);
     var fw = std.Io.Writer.fixed(text[0..]);
     _ = try fw.writeAll("Hello ~~World~~ In 3D!");
 
@@ -304,43 +308,43 @@ pub fn main() anyerror!void {
                 // You might be able to make it work but I switched to using the std.fmt interfaces which are more ergonomic in zig anyways.
                 // I use an oversized fixed buffer, but you could use an allocator to get a more robust solution
 
-                var text_buf = [_:0]u8{0} ** 64;
+                var text_buf: [64:0]u8 = @splat(0);
 
-                var opt = try std.fmt.bufPrintZ(&text_buf, "< SIZE: {d} >", .{font_size});
+                var opt = try bufPrintZ(&text_buf, "< SIZE: {d} >", .{font_size});
                 var m = rl.measureTextEx(default_font, opt, 0.8, 0.1);
                 var pos = rl.Vector3{ .x = -m.x / 2.0, .y = 0.01, .z = 2.0 };
                 drawText3D(default_font, opt, pos, 0.8, 0.1, 0.0, false, .blue);
                 pos.z += 0.5 + m.y;
 
-                opt = try std.fmt.bufPrintZ(&text_buf, "< SPACING: {d} >", .{fontSpacing});
+                opt = try bufPrintZ(&text_buf, "< SPACING: {d} >", .{fontSpacing});
                 quads += std.mem.len(opt.ptr);
                 m = rl.measureTextEx(default_font, opt, 0.8, 0.1);
                 pos.x = -m.x / 2.0;
                 drawText3D(default_font, opt, pos, 0.8, 0.1, 0.0, false, .blue);
                 pos.z += 0.5 + m.y;
 
-                opt = try std.fmt.bufPrintZ(&text_buf, "< LINE: {d} >", .{lineSpacing});
+                opt = try bufPrintZ(&text_buf, "< LINE: {d} >", .{lineSpacing});
                 quads += std.mem.len(opt.ptr);
                 m = rl.measureTextEx(default_font, opt, 0.8, 0.1);
                 pos.x = -m.x / 2.0;
                 drawText3D(default_font, opt, pos, 0.8, 0.1, 0.0, false, .blue);
                 pos.z += 0.5 + m.y;
 
-                opt = try std.fmt.bufPrintZ(&text_buf, "< LBOX: {s} >", .{if (slb) "ON" else "OFF"});
+                opt = try bufPrintZ(&text_buf, "< LBOX: {s} >", .{if (slb) "ON" else "OFF"});
                 quads += std.mem.len(opt.ptr);
                 m = rl.measureTextEx(default_font, opt, 0.8, 0.1);
                 pos.x = -m.x / 2.0;
                 drawText3D(default_font, opt, pos, 0.8, 0.1, 0.0, false, .red);
                 pos.z += 0.5 + m.y;
 
-                opt = try std.fmt.bufPrintZ(&text_buf, "< TBOX: {s} >", .{if (show_text_boundry) "ON" else "OFF"});
+                opt = try bufPrintZ(&text_buf, "< TBOX: {s} >", .{if (show_text_boundry) "ON" else "OFF"});
                 quads += std.mem.len(opt.ptr);
                 m = rl.measureTextEx(default_font, opt, 0.8, 0.1);
                 pos.x = -m.x / 2.0;
                 drawText3D(default_font, opt, pos, 0.8, 0.1, 0.0, false, .red);
                 pos.z += 0.5 + m.y;
 
-                opt = try std.fmt.bufPrintZ(&text_buf, "< LAYER DISTANCE: {d} >", .{layerDistance});
+                opt = try bufPrintZ(&text_buf, "< LAYER DISTANCE: {d} >", .{layerDistance});
                 quads += std.mem.len(opt.ptr);
                 m = rl.measureTextEx(default_font, opt, 0.8, 0.1);
                 pos.x = -m.x / 2.0;
@@ -399,8 +403,8 @@ pub fn main() anyerror!void {
         rl.drawText("Drag & drop a font file to change the font!\nType something, see what happens!\n\nPress [F3] to toggle the camera", 10, 35, 10, .black);
 
         quads += rl.textLength(&text) * 2 * layers;
-        var buf = [_:0]u8{0} ** 70;
-        const tmp = std.fmt.bufPrintZ(&buf, "{} layer(s) | {s} camera | {} quads ({} verts)", .{
+        var buf: [70:0]u8 = @splat(0);
+        const tmp = bufPrintZ(&buf, "{} layer(s) | {s} camera | {} quads ({} verts)", .{
             layers,
             if (spin) "ORBITAL" else "FREE",
             quads,

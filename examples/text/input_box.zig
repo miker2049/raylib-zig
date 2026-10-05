@@ -32,7 +32,7 @@ pub fn main() anyerror!void {
     rl.initWindow(screen_width, screen_height, "raylib [text] example - input box");
     defer rl.closeWindow();
 
-    var name = [_:0]u8{0} ** max_input_chars;
+    var name: [max_input_chars:0]u8 = @splat(0);
     var letter_count: usize = 0;
 
     const text_box = rl.Rectangle{
@@ -64,7 +64,7 @@ pub fn main() anyerror!void {
             var key = rl.getKeyPressed();
             while (key != .null) : (key = rl.getKeyPressed()) {
                 // NOTE: Only allow keys in range [32..125]
-                const keyInt: c_int = @intFromEnum(key);
+                const keyInt: c_int = @backingInt(key);
                 if ((keyInt >= 32) and (keyInt <= 125) and (letter_count < name.len)) {
                     name[letter_count] = @intCast(keyInt);
                     letter_count += 1;
