@@ -10,7 +10,9 @@ const DrawContentFn = *const fn (rl.Vector2, rl.Vector2) void;
 
 fn floatingWindow(position: *rl.Vector2, size: *rl.Vector2, minimized: *bool, moving: *bool, resizing: *bool, draw_content: DrawContentFn, content_size: rl.Vector2, scroll: *rl.Vector2, title: []const u8) void {
     var title_buf: [64]u8 = undefined;
+
     const title_text = std.mem.printSentinel(&title_buf, "{s}", .{title}, 0) catch "";
+
     const mouse_position = rl.getMousePosition();
 
     const is_left_pressed = rl.isMouseButtonPressed(rl.MouseButton.left);

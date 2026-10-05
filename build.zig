@@ -66,6 +66,13 @@ pub fn build(b: *std.Build) !void {
 
     const raylib_artifact = raylib_dep.artifact("raylib");
 
+    var raylib_headers: std.StringHashMap(std.Build.LazyPath) = .init(b.allocator);
+    defer raylib_headers.deinit();
+
+    for (raylib_artifact.installed_headers.items) |item| {
+        try raylib_headers.put(item.file.dest_rel_path, item.file.source);
+    }
+
     b.installArtifact(raylib_artifact);
 
     const raylib = this.getModule(b, target, optimize);
@@ -178,6 +185,16 @@ pub fn build(b: *std.Build) !void {
             .name = "window_flags",
             .path = "examples/core/window_flags.zig",
             .desc = "Demonstrates various flags used during and after window creation",
+        },
+        .{
+            .name = "automation_events",
+            .path = "examples/core/automation_events.zig",
+            .desc = "Demonstrates work with automation events",
+        },
+        .{
+            .name = "input_gamepad",
+            .path = "examples/core/input_gamepad.zig",
+            .desc = "Demonstrates gamepad input",
         },
         .{
             .name = "gui_message_box",
@@ -300,14 +317,134 @@ pub fn build(b: *std.Build) !void {
             .desc = "Renders a sceen with shadows and a top down persepective",
         },
         .{
+            .name = "background_scrolling",
+            .path = "examples/textures/background_scrolling.zig",
+            .desc = "Background scrolling & parallax demo",
+        },
+        .{
+            .name = "blend_modes",
+            .path = "examples/textures/blend_modes.zig",
+            .desc = "Various blend modes",
+        },
+        .{
+            .name = "bunnymark",
+            .path = "examples/textures/bunnymark.zig",
+            .desc = "Renders a lot of cute bunnies",
+        },
+        .{
+            .name = "draw_tiled",
+            .path = "examples/textures/draw_tiled.zig",
+            .desc = "various texted rendered using tiling",
+        },
+        .{
+            .name = "fog_of_war",
+            .path = "examples/textures/fog_of_war.zig",
+            .desc = "demonstrate a programattic render texture",
+        },
+        .{
+            .name = "gif_player",
+            .path = "examples/textures/gif_player.zig",
+            .desc = "GIF player example",
+        },
+        .{
+            .name = "image_channel",
+            .path = "examples/textures/image_channel.zig",
+            .desc = "Image channel extraction",
+        },
+        .{
+            .name = "image_drawing",
+            .path = "examples/textures/image_drawing.zig",
+            .desc = "Image drawing and manipulation",
+        },
+        .{
+            .name = "image_generation",
+            .path = "examples/textures/image_generation.zig",
+            .desc = "Image generation",
+        },
+        .{
+            .name = "image_kernel",
+            .path = "examples/textures/image_kernel.zig",
+            .desc = "Image kernel convolution",
+        },
+        .{
+            .name = "image_loading",
+            .path = "examples/textures/image_loading.zig",
+            .desc = "Image loading and texture creation",
+        },
+        .{
+            .name = "image_processing",
+            .path = "examples/textures/image_processing.zig",
+            .desc = "Image processing and manipulation",
+        },
+        .{
+            .name = "image_rotate",
+            .path = "examples/textures/image_rotate.zig",
+            .desc = "Image rotation",
+        },
+        .{
+            .name = "image_text",
+            .path = "examples/textures/image_text.zig",
+            .desc = "Image text drawing",
+        },
+        .{
+            .name = "mouse_painting",
+            .path = "examples/textures/mouse_painting.zig",
+            .desc = "Mouse painting example",
+        },
+        .{
+            .name = "npatch_drawing",
+            .path = "examples/textures/npatch_drawing.zig",
+            .desc = "N-patch drawing example",
+        },
+        .{
+            .name = "particles_blending",
+            .path = "examples/textures/particles_blending.zig",
+            .desc = "Particles blending",
+        },
+        .{
+            .name = "polygon_drawing",
+            .path = "examples/textures/polygon_drawing.zig",
+            .desc = "Textured polygon drawing",
+        },
+        .{
+            .name = "raw_data",
+            .path = "examples/textures/raw_data.zig",
+            .desc = "Texture from raw data",
+        },
+        .{
             .name = "sprite_anim",
             .path = "examples/textures/sprite_anim.zig",
             .desc = "Animate a sprite",
         },
         .{
-            .name = "textures_background_scrolling",
-            .path = "examples/textures/textures_background_scrolling.zig",
-            .desc = "Background scrolling & parallax demo",
+            .name = "sprite_button",
+            .path = "examples/textures/sprite_button.zig",
+            .desc = "Sprite button using mouse",
+        },
+        .{
+            .name = "sprite_explosion",
+            .path = "examples/textures/sprite_explosion.zig",
+            .desc = "Sprite explosion animation (one time)",
+        },
+        .{
+            .name = "srcrec_dstrec",
+            .path = "examples/textures/srcrec_dstrec.zig",
+            .desc = "Source and destination rectangles",
+        },
+        .{
+            .name = "textured_curve",
+            .path = "examples/textures/textured_curve.zig",
+            .desc = "Textured curve drawing",
+        },
+        .{
+            .name = "textures_logo_raylib",
+            .path = "examples/textures/textures_logo_raylib.zig",
+            .desc = "Logo drawing",
+        },
+        .{
+            .name = "to_image",
+            .path = "examples/textures/to_image.zig",
+            .desc = "Texture to image conversion",
         },
         .{
             .name = "codepoints_loading",
@@ -370,11 +507,6 @@ pub fn build(b: *std.Build) !void {
             .desc = "Simple text animation",
         },
         .{
-            .name = "textures_image_loading",
-            .path = "examples/textures/textures_image_loading.zig",
-            .desc = "Image loading and texture creation",
-        },
-        .{
             .name = "models_heightmap",
             .path = "examples/models/models_heightmap.zig",
             .desc = "Heightmap loading and drawing",
@@ -415,6 +547,21 @@ pub fn build(b: *std.Build) !void {
     const test_step = b.step("test", "Check for library compilation errors");
     test_step.dependOn(&raylib_test.step);
     test_step.dependOn(&raygui_test.step);
+
+    const generate_binding_step = b.step("binding", "Generate the binding");
+
+    const usf_dependency = b.addUpdateSourceFiles();
+    usf_dependency.addCopyFileToSource(raylib_headers.get("raylib.h").?, "lib/raylib.h");
+    usf_dependency.addCopyFileToSource(raylib_headers.get("raymath.h").?, "lib/raymath.h");
+    usf_dependency.addCopyFileToSource(raylib_headers.get("rlgl.h").?, "lib/rlgl.h");
+    usf_dependency.addCopyFileToSource(raylib_headers.get("raygui.h").?, "lib/raygui.h");
+
+    const bind_step = b.addSystemCommand(&.{"python3"});
+    bind_step.addFileArg(b.path("lib/generate_functions.py"));
+    bind_step.setCwd(b.path("lib"));
+    bind_step.step.dependOn(&usf_dependency.step);
+
+    generate_binding_step.dependOn(&bind_step.step);
 
     const examples_step = b.step("examples", "Builds all the examples");
 

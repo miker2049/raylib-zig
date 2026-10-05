@@ -86,8 +86,7 @@ pub fn main() anyerror!void {
         rl.drawText(rl.textFormat("%02i FPS", .{framesSpeed}), 575, 210, 10, .dark_gray);
         rl.drawText("PRESS RIGHT/LEFT KEYS to CHANGE SPEED!", 290, 240, 10, .dark_gray);
 
-        const frames: [MAX_FRAME_SPEED]u32 = @splat(0);
-        for (frames, 0..) |_, i| {
+        for (0..MAX_FRAME_SPEED) |i| {
             if (i < framesSpeed) {
                 rl.drawRectangle(250 + 21 * @as(i32, @intCast(i)), 205, 20, 20, .red);
             }

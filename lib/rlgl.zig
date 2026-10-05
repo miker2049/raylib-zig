@@ -777,12 +777,12 @@ pub fn rlLoadVertexArray() u32 {
 }
 
 /// Load a vertex buffer object
-pub fn rlLoadVertexBuffer(buffer: *const anyopaque, size: i32, dynamic: bool) u32 {
+pub fn rlLoadVertexBuffer(buffer: ?*const anyopaque, size: i32, dynamic: bool) u32 {
     return @as(u32, cdef.rlLoadVertexBuffer(buffer, @as(c_int, size), dynamic));
 }
 
 /// Load vertex buffer elements object
-pub fn rlLoadVertexBufferElement(buffer: *const anyopaque, size: i32, dynamic: bool) u32 {
+pub fn rlLoadVertexBufferElement(buffer: ?*const anyopaque, size: i32, dynamic: bool) u32 {
     return @as(u32, cdef.rlLoadVertexBufferElement(buffer, @as(c_int, size), dynamic));
 }
 
