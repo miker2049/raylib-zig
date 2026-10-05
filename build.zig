@@ -441,7 +441,7 @@ pub fn build(b: *std.Build) !void {
             const emcc_settings = emsdk.emccDefaultSettings(b.allocator, .{
                 .optimize = optimize,
             });
-            const emcc_step = emsdk.emccStep(b, &.{}, &.{ raylib_artifact, wasm }, .{
+            const emcc_step = try emsdk.emccStep(b, &.{}, &.{ raylib_artifact, wasm }, .{
                 .optimize = optimize,
                 .flags = emcc_flags,
                 .settings = emcc_settings,
@@ -451,7 +451,7 @@ pub fn build(b: *std.Build) !void {
                 .out_file_name = wasm.name,
             });
 
-            const emrun_step = emsdk.emrunStep(
+            const emrun_step = try emsdk.emrunStep(
                 b,
                 b.graph.path(.install_prefix, b.fmt("{s}.html", .{wasm.name})),
                 &.{},
