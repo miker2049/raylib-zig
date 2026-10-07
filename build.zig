@@ -551,10 +551,10 @@ pub fn build(b: *std.Build) !void {
     const generate_binding_step = b.step("binding", "Generate the binding");
 
     const usf_dependency = b.addUpdateSourceFiles();
-    usf_dependency.addCopyFileToSource(raylib_headers.get("raylib.h").?, "lib/raylib.h");
-    usf_dependency.addCopyFileToSource(raylib_headers.get("raymath.h").?, "lib/raymath.h");
-    usf_dependency.addCopyFileToSource(raylib_headers.get("rlgl.h").?, "lib/rlgl.h");
-    usf_dependency.addCopyFileToSource(raylib_headers.get("raygui.h").?, "lib/raygui.h");
+    usf_dependency.addCopyFileToSource(raylib_headers.get("raylib.h") orelse return error.LazyDependencyNeeded, "lib/raylib.h");
+    usf_dependency.addCopyFileToSource(raylib_headers.get("raymath.h") orelse return error.LazyDependencyNeeded, "lib/raymath.h");
+    usf_dependency.addCopyFileToSource(raylib_headers.get("rlgl.h") orelse return error.LazyDependencyNeeded, "lib/rlgl.h");
+    usf_dependency.addCopyFileToSource(raylib_headers.get("raygui.h") orelse return error.LazyDependencyNeeded, "lib/raygui.h");
 
     const bind_step = b.addSystemCommand(&.{"python3"});
     bind_step.addFileArg(b.path("lib/generate_functions.py"));
