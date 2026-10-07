@@ -64,6 +64,11 @@ pub fn build(b: *std.Build) !void {
         .raygui = true,
     });
 
+    // raylib's build script bails out before creating its artifact when one of
+    // its lazy dependencies hasn't been fetched yet. Propagate so the build
+    // runner fetches them and reruns us.
+    if (b.graph.needed_lazy_dependencies.count() != 0) return error.LazyDependencyNeeded;
+
     const raylib_artifact = raylib_dep.artifact("raylib");
 
     var raylib_headers: std.StringHashMap(std.Build.LazyPath) = .init(b.allocator);
@@ -594,7 +599,7 @@ pub fn build(b: *std.Build) !void {
                 .settings = emcc_settings,
                 .shell_file_path = raylib_dep.path("src/shell.html"),
                 .install_dir = install_dir,
-                .embed_paths = &.{.{ .src_path = b.path("resources/") }},
+                .preload_paths = &.{.{ .src_path = b.path("resources"), .virtual_path = "resources" }},
                 .out_file_name = wasm.name,
             });
 
