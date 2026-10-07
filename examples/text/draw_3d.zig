@@ -409,7 +409,7 @@ pub fn main() anyerror!void {
             if (spin) "ORBITAL" else "FREE",
             quads,
             quads * 4,
-        }, 0) catch unreachable;
+        }) catch unreachable;
         var width = rl.measureText(tmp, 10);
         rl.drawText(tmp, screen_width - 20 - width, 10, 10, .dark_green);
 
