@@ -10,6 +10,18 @@ pub const OpenglVersion = rl.OpenglVersion;
 pub const LinuxDisplayBackend = rl.LinuxDisplayBackend;
 pub const PlatformBackend = rl.PlatformBackend;
 
+/// raylib's `emsdk.emccStep` always invokes `emcc.py`, which can't be spawned
+/// directly on Windows. Point the underlying run step at `emcc.bat` instead.
+fn fixEmccOnWindows(b: *std.Build, emcc_step: *std.Build.Step) !void {
+    if (@import("builtin").os.tag != .windows) return;
+    for (emcc_step.dependencies.items) |dep| {
+        const run = dep.cast(std.Build.Step.Run) orelse continue;
+        run.argv.items[0].lazy_path.lazy_path = try emsdk.path(b, "upstream/emscripten/emcc.bat");
+        return;
+    }
+    return error.EmccRunStepNotFound;
+}
+
 const Program = struct {
     name: []const u8,
     path: []const u8,
@@ -602,6 +614,7 @@ pub fn build(b: *std.Build) !void {
                 .preload_paths = &.{.{ .src_path = b.path("resources"), .virtual_path = "resources" }},
                 .out_file_name = wasm.name,
             });
+            try fixEmccOnWindows(b, emcc_step);
 
             const emrun_step = try emsdk.emrunStep(
                 b,
